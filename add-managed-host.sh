@@ -63,7 +63,7 @@ fi
 if [ $hwtype != "lxc" ]; then
 	/opt/farm/mgr/farm-register/add-dedicated-key.sh $server backup
 
-	if [ -x /opt/farm/ext/backup-collector/add-backup-host.sh ]; then
-		/opt/farm/ext/backup-collector/add-backup-host.sh $server
+	if [ -x /opt/farm/mgr/backup-collector/add-backup-host.sh ]; then
+		/opt/farm/mgr/backup-collector/add-backup-host.sh $server
 	fi
 fi
