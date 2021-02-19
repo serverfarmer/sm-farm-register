@@ -1,8 +1,6 @@
 #!/bin/bash
 . /opt/farm/ext/net-utils/functions
 
-path="/etc/local/.farm"
-
 if [ "$1" = "" ]; then
 	echo "usage: $0 <hostname[:port]>"
 	exit 1
@@ -20,7 +18,7 @@ else
 	port=22
 fi
 
-if grep -q "^$host:" $path/*.hosts || grep -q "^$host$" $path/*.hosts; then
+if grep -q "^$host:" ~/.farm/*.hosts || grep -q "^$host$" ~/.farm/*.hosts; then
 	echo "error: host $host already added"
 	exit 1
 fi
@@ -41,21 +39,21 @@ netmgr=`$SSH -i $sshkey -p $port root@$host "cat /etc/X11/xinit/xinitrc 2>/dev/n
 cloud=`$SSH -i $sshkey -p $port root@$host "cat /etc/cloud/build.info 2>/dev/null"`
 
 if [ "$netmgr" != "" ]; then
-	echo $server >>"$path/workstation.hosts"
+	echo $server >>~/.farm/workstation.hosts
 elif [ $hwtype = "physical" ]; then
-	echo $server >>"$path/physical.hosts"
+	echo $server >>~/.farm/physical.hosts
 elif [ $hwtype = "lxc" ]; then
-	echo $server >>"$path/lxc.hosts"
+	echo $server >>~/.farm/lxc.hosts
 elif [ "$openvz" != "" ]; then
-	echo $server >>"$path/container.hosts"
+	echo $server >>~/.farm/container.hosts
 elif [ "$cloud" != "" ]; then
-	echo $server >>"$path/cloud.hosts"
+	echo $server >>~/.farm/cloud.hosts
 elif [ $hwtype = "guest" ]; then
-	echo $server >>"$path/virtual.hosts"
+	echo $server >>~/.farm/virtual.hosts
 fi
 
 if [ "$docker" != "" ]; then
-	echo $server >>"$path/docker.hosts"
+	echo $server >>~/.farm/docker.hosts
 fi
 
 /opt/farm/mgr/farm-register/add-dedicated-key.sh $server root
