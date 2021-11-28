@@ -18,7 +18,7 @@ else
 	port=22
 fi
 
-if grep -q "^$host:" ~/.farm/*.hosts || grep -q "^$host$" ~/.farm/*.hosts; then
+if grep -q "^$host:" ~/.serverfarmer/inventory/*.hosts || grep -q "^$host$" ~/.serverfarmer/inventory/*.hosts; then
 	echo "error: host $host already added"
 	exit 1
 fi
@@ -39,21 +39,21 @@ netmgr=`$SSH -i $sshkey -p $port root@$host "cat /etc/X11/xinit/xinitrc 2>/dev/n
 cloud=`$SSH -i $sshkey -p $port root@$host "cat /etc/cloud/build.info 2>/dev/null"`
 
 if [ "$netmgr" != "" ]; then
-	echo $server >>~/.farm/workstation.hosts
+	echo $server >>~/.serverfarmer/inventory/workstation.hosts
 elif [ $hwtype = "physical" ]; then
-	echo $server >>~/.farm/physical.hosts
+	echo $server >>~/.serverfarmer/inventory/physical.hosts
 elif [ $hwtype = "lxc" ]; then
-	echo $server >>~/.farm/lxc.hosts
+	echo $server >>~/.serverfarmer/inventory/lxc.hosts
 elif [ "$openvz" != "" ]; then
-	echo $server >>~/.farm/container.hosts
+	echo $server >>~/.serverfarmer/inventory/container.hosts
 elif [ "$cloud" != "" ]; then
-	echo $server >>~/.farm/cloud.hosts
+	echo $server >>~/.serverfarmer/inventory/cloud.hosts
 elif [ $hwtype = "guest" ]; then
-	echo $server >>~/.farm/virtual.hosts
+	echo $server >>~/.serverfarmer/inventory/virtual.hosts
 fi
 
 if [ "$docker" != "" ]; then
-	echo $server >>~/.farm/docker.hosts
+	echo $server >>~/.serverfarmer/inventory/docker.hosts
 fi
 
 /opt/farm/mgr/farm-register/add-dedicated-key.sh $server root
