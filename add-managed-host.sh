@@ -24,19 +24,18 @@ if grep -q "^$host:" ~/.serverfarmer/inventory/*.hosts || grep -q "^$host$" ~/.s
 fi
 
 sshkey=`/opt/farm/ext/keys/get-ssh-management-key.sh $host`
-SSH=/opt/farm/ext/binary-ssh-client/wrapper/ssh
-$SSH -i $sshkey -p $port -o StrictHostKeyChecking=no -o PasswordAuthentication=no root@$host uptime >/dev/null 2>/dev/null
+ssh -i $sshkey -p $port -o StrictHostKeyChecking=no -o PasswordAuthentication=no root@$host uptime >/dev/null 2>/dev/null
 
 if [[ $? != 0 ]]; then
 	echo "error: host $server denied access"
 	exit 1
 fi
 
-hwtype=`$SSH -i $sshkey -p $port root@$host /opt/farm/ext/system/detect-hardware-type.sh`
-docker=`$SSH -i $sshkey -p $port root@$host "which docker 2>/dev/null"`
-openvz=`$SSH -i $sshkey -p $port root@$host "cat /proc/vz/version 2>/dev/null"`
-netmgr=`$SSH -i $sshkey -p $port root@$host "cat /etc/X11/xinit/xinitrc 2>/dev/null"`
-cloud=`$SSH -i $sshkey -p $port root@$host "cat /etc/cloud/build.info 2>/dev/null"`
+hwtype=`ssh -i $sshkey -p $port root@$host /opt/farm/ext/system/detect-hardware-type.sh`
+docker=`ssh -i $sshkey -p $port root@$host "which docker 2>/dev/null"`
+openvz=`ssh -i $sshkey -p $port root@$host "cat /proc/vz/version 2>/dev/null"`
+netmgr=`ssh -i $sshkey -p $port root@$host "cat /etc/X11/xinit/xinitrc 2>/dev/null"`
+cloud=`ssh -i $sshkey -p $port root@$host "cat /etc/cloud/build.info 2>/dev/null"`
 
 if [ "$netmgr" != "" ]; then
 	echo $server >>~/.serverfarmer/inventory/workstation.hosts

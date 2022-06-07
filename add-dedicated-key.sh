@@ -24,8 +24,6 @@ else
 	user=root
 fi
 
-SSH=/opt/farm/ext/binary-ssh-client/wrapper/ssh
-
 newkey=`/opt/farm/ext/keys/get-ssh-dedicated-key.sh $host $user`
 admkey=`/opt/farm/ext/keys/get-ssh-management-key.sh $host`
 
@@ -37,7 +35,7 @@ elif [ -f $newkey ]; then
 	exit 1
 fi
 
-entry=`$SSH -i $admkey -p $port -o StrictHostKeyChecking=no -o PasswordAuthentication=no root@$host getent passwd $user 2>/dev/null`
+entry=`ssh -i $admkey -p $port -o StrictHostKeyChecking=no -o PasswordAuthentication=no root@$host getent passwd $user 2>/dev/null`
 
 if [[ "$entry" = "" ]]; then
 	echo "error: host $server denied access, or user $user not found"
@@ -48,5 +46,5 @@ ssh-keygen -f $newkey -C $user@$host -N "$3"
 pubkey=`cat $newkey.pub`
 home=`echo "$entry" |cut -d: -f 6`
 
-$SSH -i $admkey -p $port root@$host "mkdir -p $home/.ssh"
-$SSH -i $admkey -p $port root@$host "echo \"$pubkey\" >>$home/.ssh/authorized_keys"
+ssh -i $admkey -p $port root@$host "mkdir -p $home/.ssh"
+ssh -i $admkey -p $port root@$host "echo \"$pubkey\" >>$home/.ssh/authorized_keys"
